@@ -1,0 +1,9 @@
+.createBtn {
+  background-image: linear-gradient(
+    to right,
+    #f518e3 0%,
+    #fbae24 51%,
+    #f518e3 100%
+  );
+  padding: 15px;
+}
