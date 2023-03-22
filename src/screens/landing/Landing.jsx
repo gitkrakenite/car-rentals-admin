@@ -10,6 +10,7 @@ const Landing = () => {
   const navigate = useNavigate();
   const [customer, setCustomer] = useState(false);
   const [cars, setCars] = useState(false);
+  const [orders, setOrders] = useState(false);
 
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
@@ -25,6 +26,13 @@ const Landing = () => {
     setCustomer(false);
     setCars(true);
     localStorage.setItem("screen", JSON.stringify("cars"));
+  };
+
+  const showOrders = () => {
+    setCustomer(false);
+    setCars(false);
+    setOrders(true);
+    localStorage.setItem("screen", JSON.stringify("orders"));
   };
 
   // get screen from localstorage
@@ -56,7 +64,7 @@ const Landing = () => {
         </div>
       </div>
       {/* other section */}
-      <div className="flex justify-between h-[95vh]">
+      <div className="flex justify-between min-h-[95vh]">
         {/* left main panel */}
         <div className="flex-[0.2] bg-[#f518e3] text-white p-[10px] ">
           <ul>
@@ -76,14 +84,23 @@ const Landing = () => {
                 All Cars
               </li>
             </div>
+            <div
+              style={{ borderBottom: "1px solid white" }}
+              className="cursor-pointer mb-2"
+            >
+              <li onClick={showOrders} className="p-[10px]">
+                Orders
+              </li>
+            </div>
           </ul>
         </div>
         {/* other components */}
-        <div className="flex-[0.8] bg-zinc-300">
+        <div className="flex-[0.8] bg-zinc-100 px-3">
           {
             <div>
               {currentscreen === "customer" && <Customers />}
               {currentscreen === "cars" && <Cars />}
+              {currentscreen === "orders" && <p>Orders</p>}
             </div>
           }
         </div>
