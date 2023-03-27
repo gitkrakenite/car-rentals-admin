@@ -8,6 +8,7 @@ import {
 } from "react-icons/ai";
 import {
   BsCurrencyDollar,
+  BsPen,
   BsPeople,
   BsSpeedometer2,
   BsTrash,
@@ -20,6 +21,8 @@ import "./cars.css";
 const Cars = () => {
   const [allCars, setAllCars] = useState();
   const [loading, setLoading] = useState(false);
+  const [createNewCarForm, setCreateNewCarForm] = useState(false);
+  const [updateCarForm, setUpdateCarForm] = useState(false);
 
   // search
   const [searchText, setSearchText] = useState("");
@@ -64,7 +67,7 @@ const Cars = () => {
   };
 
   useEffect(() => {
-    fetchAllCars();
+    // fetchAllCars();
     // alert("loaded");
   }, []);
 
@@ -75,30 +78,260 @@ const Cars = () => {
       <h1 className="mb-[20px] text-2xl" style={{ fontWeight: 700 }}>
         Manage All your Cars
       </h1>
-      <div>
-        <form
-          className="flex p-[14px] items-center gap-2 bg-zinc-300 w-[40%] rounded-lg"
-          // onSubmit={handleSearchChange}
-        >
-          <div>
-            <AiOutlineSearch className="text-lg" />
-          </div>
-          <div>
-            <input
-              type="text"
-              name=""
-              id=""
-              placeholder="Search car title or status"
-              className="text-lg bg-transparent outline-none border-none"
-              value={searchText}
-              onChange={handleSearchChange}
-            />
-          </div>
-        </form>
+      <div className="flex justify-between items-center">
+        <div className="">
+          <form
+            className="flex p-[14px] items-center gap-2 bg-zinc-300  rounded-lg"
+            // onSubmit={handleSearchChange}
+          >
+            <div>
+              <AiOutlineSearch className="text-lg" />
+            </div>
+            <div>
+              <input
+                type="text"
+                name=""
+                id=""
+                placeholder="Search car title or status"
+                className="text-lg bg-transparent outline-none border-none"
+                value={searchText}
+                onChange={handleSearchChange}
+              />
+            </div>
+          </form>
+        </div>
+        <div>
+          <button
+            className="bg-[#fbae24] text-white p-[10px] rounded-md"
+            onClick={() => setCreateNewCarForm(!createNewCarForm)}
+          >
+            Create New Car
+          </button>
+        </div>
       </div>
 
-      {/* all Users */}
-      <h1 className="mt-[20px] text-2xl">List of All Cars</h1>
+      {/* createNewCar form */}
+      {createNewCarForm && (
+        <div className="mt-8">
+          {/* <h2 className="mb-3 text-lg" style={{ fontWeight: 700 }}>
+            Create A New Car
+          </h2> */}
+          <form className="flex flex-col gap-[10px] w-[50%]">
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="title"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                Name Of The Car
+              </label>
+              <input
+                type="text"
+                name=""
+                id="title"
+                placeholder="i.e Mercedes c180"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+                required
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="seats"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                How many seats ?
+              </label>
+              <input
+                type="number"
+                name=""
+                id="seats"
+                placeholder="i.e 5"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+                required
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="price"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                How much per day ?
+              </label>
+              <input
+                type="number"
+                name=""
+                id="price"
+                placeholder="i.e 5000"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+                required
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="gear"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                Engine Transmission ?
+              </label>
+              <select
+                name=""
+                id="gear"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+              >
+                <option value="">Choose</option>
+                <option value="auto">Automatic</option>
+                <option value="manual">Manual</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="carImg"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                Image of the car ?
+              </label>
+              <input
+                type="text"
+                name=""
+                id="carImg"
+                placeholder="i.e https://images.google.com/"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+                required
+              />
+            </div>
+            <button className="bg-[#f518e3] text-white rounded-md p-[8px]">
+              Add This Car
+            </button>
+            <p
+              className="bg-[#fbae24] text-white rounded-md p-[8px] text-center cursor-pointer"
+              onClick={() => setCreateNewCarForm(false)}
+            >
+              Hide This Section
+            </p>
+          </form>
+        </div>
+      )}
+
+      {/* update Car form */}
+      {updateCarForm && (
+        <div className="mt-8">
+          {/* <h2 className="mb-3 text-lg" style={{ fontWeight: 700 }}>
+            Create A New Car
+          </h2> */}
+          <form className="flex flex-col gap-[10px] w-[50%]">
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="title"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                Name Of The Car
+              </label>
+              <input
+                type="text"
+                name=""
+                id="title"
+                placeholder="i.e Mercedes c180"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="seats"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                How many seats ?
+              </label>
+              <input
+                type="number"
+                name=""
+                id="seats"
+                placeholder="i.e 5"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="price"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                How much per day ?
+              </label>
+              <input
+                type="number"
+                name=""
+                id="price"
+                placeholder="i.e 5000"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="gear"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                Engine Transmission ?
+              </label>
+              <select
+                name=""
+                id="gear"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+              >
+                <option value="">Choose</option>
+                <option value="auto">Automatic</option>
+                <option value="manual">Manual</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="carImg"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                Image of the car ?
+              </label>
+              <input
+                type="text"
+                name=""
+                id="carImg"
+                placeholder="i.e https://images.google.com/"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+              />
+            </div>
+            <button className="bg-[#f518e3] text-white rounded-md p-[8px]">
+              Update Car
+            </button>
+            <p
+              className="bg-[#fbae24] text-white rounded-md p-[8px] text-center cursor-pointer"
+              onClick={() => setUpdateCarForm(false)}
+            >
+              Hide This Section
+            </p>
+          </form>
+        </div>
+      )}
+
+      {/* all Cars */}
+      <h1 className="mt-[20px] text-xl" style={{ fontWeight: 600 }}>
+        List of All Cars
+      </h1>
 
       {searchText && (
         <h2 className="font-medium text-[#666e75] text-xl mb-3">
@@ -128,14 +361,16 @@ const Cars = () => {
                         className="w-[100%] object-cover"
                       />
                     </div>
-                    <p>title: {car.title}</p>
-                    <div className="flex items-center gap-[5px]">
+                    <p className="text-lg mb-3" style={{ fontWeight: 600 }}>
+                      Name: {car.title}
+                    </p>
+                    <div className="flex items-center gap-[5px] mb-1">
                       <AiFillStar className="text-[#f518e3]" />
                       <AiFillStar className="text-[#f518e3]" />
                       <AiFillStar className="text-[#f518e3]" />
                       <AiFillStar className="text-[#f518e3]" />
                     </div>
-                    <div className="flex items-center text-zinc-600">
+                    <div className="flex items-center text-zinc-600 justify-between mb-2">
                       <div className="flex items-center gap-[5px]">
                         <BsPeople />
                         <p>{car.seats} people</p>
@@ -145,10 +380,20 @@ const Cars = () => {
                         <p>Economy</p>
                       </div>
                     </div>
-                    <div className="flex items-center text-zinc-600">
+                    <div className="flex items-center text-zinc-600 justify-between">
                       <div className="flex items-center gap-[5px]">
                         {/* <BsPeople /> */}
-                        <p>{car.status}</p>
+                        {car.status === "available" ? (
+                          <p className="bg-green-700 text-white p-1 rounded-md">
+                            {" "}
+                            {car.status}
+                          </p>
+                        ) : (
+                          <p className="bg-red-700 text-white p-1 rounded-md">
+                            {" "}
+                            {car.status}
+                          </p>
+                        )}
                       </div>
                       <div className="flex items-center gap-[5px]">
                         <BsSpeedometer2 />
@@ -156,18 +401,28 @@ const Cars = () => {
                       </div>
                     </div>
                     {/* options */}
-                    <div className="mt-[20px] flex items-center gap-[20px]">
-                      <div className="flex items-center gap-[2px]">
-                        <AiOutlineInfoCircle className="text-[#f518e3]" />
-                        <p style={{ fontWeight: 700 }}>
-                          Remove user from rentals ?
+                    <div className="mt-[20px] flex items-center justify-between">
+                      <div className="flex items-center gap-[5px] cursor-pointer">
+                        <p>
+                          <BsTrash
+                            title="Remove Car"
+                            className="text-red-600 cursor-pointer"
+                          />
                         </p>
+                        <p>Delete Car</p>
                       </div>
-                      <div>
-                        <BsTrash
-                          title="Remove User"
-                          className="text-red-600 cursor-pointer"
-                        />
+                      <div
+                        className="flex items-center gap-[5px] cursor-pointer"
+                        onClick={() => setUpdateCarForm(true)}
+                      >
+                        <p>
+                          <BsPen
+                            title="Update Car"
+                            className="text-green-600 cursor-pointer"
+                          />
+                        </p>
+
+                        <p>Update Car</p>
                       </div>
                     </div>
                   </div>
@@ -178,7 +433,7 @@ const Cars = () => {
             <div className="mt-[1em] carItemWrap gap-[20px] ">
               {allCars?.map((car) => (
                 <div key={car._id} className="itemShadow ">
-                  <div className="flex justify-center mb-[20px] text-4xl">
+                  <div className="flex justify-center mb-[10px] text-4xl">
                     <img
                       src={
                         car.image ||
@@ -188,8 +443,8 @@ const Cars = () => {
                       className="w-[100%] object-cover"
                     />
                   </div>
-                  <p className="p-[10px] text-2xl" style={{ fontWeight: 700 }}>
-                    {car.title}
+                  <p className="p-[10px] text-xl" style={{ fontWeight: 600 }}>
+                    Name: {car.title}
                   </p>
                   <div className="flex items-center gap-[5px] p-[10px]">
                     <AiFillStar className="text-[#f518e3]" />
@@ -237,18 +492,28 @@ const Cars = () => {
                     </p>
                   </div>
                   {/* options */}
-                  <div className="mt-[20px] flex items-center justify-between gap-[20px] p-[10px]">
-                    <div className="flex items-center gap-[2px]">
-                      <AiOutlineInfoCircle className="text-[#f518e3]" />
-                      <p style={{ fontWeight: 700 }}>
-                        Remove car from rentals ?
+                  <div className="mt-[20px] flex items-center justify-between p-2">
+                    <div className="flex items-center gap-[5px] cursor-pointer">
+                      <p>
+                        <BsTrash
+                          title="Remove Car"
+                          className="text-red-600 cursor-pointer"
+                        />
                       </p>
+                      <p>Delete Car</p>
                     </div>
-                    <div>
-                      <BsTrash
-                        title="Remove Car"
-                        className="text-red-600 cursor-pointer"
-                      />
+                    <div
+                      className="flex items-center gap-[5px] cursor-pointer"
+                      onClick={() => setUpdateCarForm(true)}
+                    >
+                      <p>
+                        <BsPen
+                          title="Update Car"
+                          className="text-green-600 cursor-pointer"
+                        />
+                      </p>
+
+                      <p>Update Car</p>
                     </div>
                   </div>
                 </div>

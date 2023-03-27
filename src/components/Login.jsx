@@ -1,10 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./register.css";
 import logoPg from "../assets/pic1.png";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { login, reset } from "../features/auth/authSlice";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
   const [show, setShow] = useState(false);
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error("Error occurred" + message);
+    }
+    if (isSuccess || user) {
+      toast.success("Welcome!");
+      navigate("/");
+    }
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!name || !password) {
+      toast.error("All details needed");
+      return;
+    } else {
+      try {
+        const userData = { name, password };
+        // console.log(profile);
+        dispatch(login(userData));
+      } catch (error) {
+        toast.error("An error occurred: " + message);
+        alert("Login failed");
+      }
+    }
+  };
+
   return (
     <div className="w-[99%] lg:w-[80%] m-auto ">
       <div className="mb-[20px]">
@@ -16,7 +59,7 @@ const Login = () => {
         </h1>
       </div>
       <div className="">
-        <form className="flex flex-col gap-[1.3em]">
+        <form className="flex flex-col gap-[1.3em]" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-[1em]">
             <label
               htmlFor="username"
@@ -28,9 +71,12 @@ const Login = () => {
             <input
               type="text"
               id="username"
-              placeholder="Create Username"
+              placeholder="Enter Username"
               className="p-[8px] rounded-md"
               style={{ border: "2px solid black" }}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
             />
           </div>
           <div className="flex items-center">
@@ -45,10 +91,12 @@ const Login = () => {
               <input
                 type={show ? "text" : "password"}
                 id="password"
-                placeholder="Create Password"
+                placeholder="Enter Password"
                 className="p-[8px] rounded-md"
                 style={{ border: "2px solid black" }}
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
@@ -72,6 +120,7 @@ const Login = () => {
           <button
             className="createBtn text-zinc-100 text-lg rounded-md"
             style={{ fontWeight: 600 }}
+            onClick={handleSubmit}
           >
             Sign in now
           </button>

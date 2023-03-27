@@ -39,7 +39,7 @@ const Landing = () => {
   const currentscreen = JSON.parse(localStorage.getItem("screen"));
 
   useEffect(() => {
-    if (user.isAdmin !== "true") {
+    if (user?.isAdmin !== "true") {
       toast.error("You are not admin");
       navigate("/auth");
       return;
