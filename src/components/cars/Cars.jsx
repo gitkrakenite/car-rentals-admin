@@ -21,8 +21,19 @@ import "./cars.css";
 const Cars = () => {
   const [allCars, setAllCars] = useState();
   const [loading, setLoading] = useState(false);
+  const [createCarloading, setCreateCarLoading] = useState(false);
   const [createNewCarForm, setCreateNewCarForm] = useState(false);
   const [updateCarForm, setUpdateCarForm] = useState(false);
+
+  // create car states
+  const [title, setTitle] = useState("");
+  const [seats, setSeats] = useState("");
+  const [price, setPrice] = useState("");
+  const [image, setImage] = useState("");
+  const [gear, setGear] = useState("");
+  const [status, setStatus] = useState("");
+  const [carUpdateDetail, setCarUpdateDetail] = useState([]);
+  const [carUpdateId, setCarUpdateId] = useState(""); //works
 
   // search
   const [searchText, setSearchText] = useState("");
@@ -47,6 +58,67 @@ const Cars = () => {
     }
   };
 
+  const handleCreateCar = async (e) => {
+    e.preventDefault();
+    if (!title || !seats || !price || !image || !gear) {
+      toast.error("All fields Needed");
+      return;
+    }
+
+    if (seats < 1 || price < 1) {
+      toast.error("Seats or price is less than 1");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const carData = { title, seats, price, image, gear };
+      const { data } = await axios.post(
+        "https://car-rentals-backend.vercel.app/api/v1/car/create",
+        carData
+      );
+      if (data) {
+        // setAllCars(data);
+        setLoading(false);
+        setCreateNewCarForm(false);
+        toast.success("Car Added");
+        setCreateCarLoading(!createCarloading);
+        handleClearFields();
+        // console.log(allUsers);
+      }
+    } catch (error) {
+      toast.error("Could not Add car", error);
+    }
+  };
+
+  const handleDeleteCar = async (carId) => {
+    if (!carId) {
+      toast.error("ID Needed");
+      return;
+    }
+    try {
+      setLoading(true);
+      await axios.delete(
+        "https://car-rentals-backend.vercel.app/api/v1/car/" + carId
+      );
+      setLoading(false);
+      toast.success("Car Deleted");
+      setCreateCarLoading(!createCarloading);
+    } catch (error) {
+      toast.error("Could not Add car", error);
+    }
+  };
+
+  const handleClearFields = () => {
+    setTitle("");
+    setSeats("");
+    setPrice("");
+    setImage("");
+    setGear("");
+    setStatus("");
+  };
+
   const handleSearchChange = async (e) => {
     e.preventDefault();
     clearTimeout(setsearchTimeout);
@@ -67,11 +139,8 @@ const Cars = () => {
   };
 
   useEffect(() => {
-    // fetchAllCars();
-    // alert("loaded");
-  }, []);
-
-  // console.log(searchedResults);
+    fetchAllCars();
+  }, [createCarloading]);
 
   return (
     <div>
@@ -81,7 +150,7 @@ const Cars = () => {
       <div className="flex justify-between items-center">
         <div className="">
           <form
-            className="flex p-[14px] items-center gap-2 bg-zinc-300  rounded-lg"
+            className="flex p-[14px] items-center gap-2  bg-zinc-300  rounded-lg"
             // onSubmit={handleSearchChange}
           >
             <div>
@@ -116,7 +185,10 @@ const Cars = () => {
           {/* <h2 className="mb-3 text-lg" style={{ fontWeight: 700 }}>
             Create A New Car
           </h2> */}
-          <form className="flex flex-col gap-[10px] w-[50%]">
+          <form
+            className="flex flex-col gap-[10px] w-[50%]"
+            onSubmit={handleCreateCar}
+          >
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="title"
@@ -133,6 +205,8 @@ const Cars = () => {
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
                 required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -151,6 +225,8 @@ const Cars = () => {
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
                 required
+                value={seats}
+                onChange={(e) => setSeats(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -169,6 +245,8 @@ const Cars = () => {
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
                 required
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -184,6 +262,8 @@ const Cars = () => {
                 id="gear"
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
+                value={gear}
+                onChange={(e) => setGear(e.target.value)}
               >
                 <option value="">Choose</option>
                 <option value="auto">Automatic</option>
@@ -206,9 +286,14 @@ const Cars = () => {
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
                 required
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
               />
             </div>
-            <button className="bg-[#f518e3] text-white rounded-md p-[8px]">
+            <button
+              className="bg-[#f518e3] text-white rounded-md p-[8px]"
+              onClick={handleCreateCar}
+            >
               Add This Car
             </button>
             <p
@@ -223,11 +308,11 @@ const Cars = () => {
 
       {/* update Car form */}
       {updateCarForm && (
-        <div className="mt-8">
-          {/* <h2 className="mb-3 text-lg" style={{ fontWeight: 700 }}>
-            Create A New Car
-          </h2> */}
-          <form className="flex flex-col gap-[10px] w-[50%]">
+        <div className="mt-8 p-[5px]">
+          <form
+            className="flex flex-col gap-[10px] w-[50%]"
+            onSubmit={() => e.preventDefault()}
+          >
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="title"
@@ -243,6 +328,8 @@ const Cars = () => {
                 placeholder="i.e Mercedes c180"
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -260,6 +347,8 @@ const Cars = () => {
                 placeholder="i.e 5"
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
+                value={seats}
+                onChange={(e) => setSeats(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -277,6 +366,8 @@ const Cars = () => {
                 placeholder="i.e 5000"
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -292,10 +383,33 @@ const Cars = () => {
                 id="gear"
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
+                value={gear}
+                onChange={(e) => setGear(e.target.value)}
               >
                 <option value="">Choose</option>
                 <option value="auto">Automatic</option>
                 <option value="manual">Manual</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="status"
+                className="mb-3 text-md"
+                style={{ fontWeight: 600 }}
+              >
+                Available To Rent ?
+              </label>
+              <select
+                name=""
+                id="status"
+                className="bg-transparent p-[8px] rounded-md"
+                style={{ border: "1px solid #ccc" }}
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="">Choose</option>
+                <option value="available">Available</option>
+                <option value="unavailable">Unavailable</option>
               </select>
             </div>
             <div className="flex flex-col gap-1">
@@ -313,9 +427,14 @@ const Cars = () => {
                 placeholder="i.e https://images.google.com/"
                 className="bg-transparent p-[8px] rounded-md"
                 style={{ border: "1px solid #ccc" }}
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
               />
             </div>
-            <button className="bg-[#f518e3] text-white rounded-md p-[8px]">
+            <button
+              className="bg-[#f518e3] text-white rounded-md p-[8px]"
+              // onClick={handleUpdateCar}
+            >
               Update Car
             </button>
             <p
@@ -345,7 +464,7 @@ const Cars = () => {
           <Spinner message="Fetching all cars" />
         </div>
       ) : (
-        <div>
+        <div className="h-[76vh] overflow-y-scroll">
           {searchText ? (
             <>
               <div className="mt-[1em] carItemWrap gap-[20px] ">
@@ -358,7 +477,7 @@ const Cars = () => {
                           "https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&cs=tinysrgb&w=1600"
                         }
                         alt=""
-                        className="w-[100%] object-cover"
+                        className="w-[100%] max-h-[350px] object-cover"
                       />
                     </div>
                     <p className="text-lg mb-3" style={{ fontWeight: 600 }}>
@@ -373,7 +492,7 @@ const Cars = () => {
                     <div className="flex items-center text-zinc-600 justify-between mb-2">
                       <div className="flex items-center gap-[5px]">
                         <BsPeople />
-                        <p>{car.seats} people</p>
+                        <p>{car.seats} seater</p>
                       </div>
                       <div className="flex items-center gap-[5px]">
                         <BsCurrencyDollar />
@@ -402,7 +521,10 @@ const Cars = () => {
                     </div>
                     {/* options */}
                     <div className="mt-[20px] flex items-center justify-between">
-                      <div className="flex items-center gap-[5px] cursor-pointer">
+                      <div
+                        className="flex items-center gap-[5px] cursor-pointer"
+                        onClick={() => handleDeleteCar(car._id)}
+                      >
                         <p>
                           <BsTrash
                             title="Remove Car"
@@ -411,7 +533,7 @@ const Cars = () => {
                         </p>
                         <p>Delete Car</p>
                       </div>
-                      <div
+                      {/* <div
                         className="flex items-center gap-[5px] cursor-pointer"
                         onClick={() => setUpdateCarForm(true)}
                       >
@@ -423,7 +545,7 @@ const Cars = () => {
                         </p>
 
                         <p>Update Car</p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 ))}
@@ -440,7 +562,7 @@ const Cars = () => {
                         "https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&cs=tinysrgb&w=1600"
                       }
                       alt=""
-                      className="w-[100%] object-cover"
+                      className="w-[100%] max-h-[350px] object-cover"
                     />
                   </div>
                   <p className="p-[10px] text-xl" style={{ fontWeight: 600 }}>
@@ -455,7 +577,7 @@ const Cars = () => {
                   <div className="flex items-center justify-between text-zinc-600 p-[10px]">
                     <div className="flex items-center gap-[10px]">
                       <BsPeople className="text-lg" />
-                      <p className="text-lg">{car.seats} people</p>
+                      <p className="text-lg">{car.seats} seater</p>
                     </div>
                     <div className="flex items-center gap-[10px]">
                       <BsCurrencyDollar className="text-lg" />
@@ -480,7 +602,6 @@ const Cars = () => {
                       <p className="text-lg">{car.gear}</p>
                     </div>
                   </div>
-
                   <div className="p-[10px]">
                     <p>
                       Ksh.
@@ -493,7 +614,10 @@ const Cars = () => {
                   </div>
                   {/* options */}
                   <div className="mt-[20px] flex items-center justify-between p-2">
-                    <div className="flex items-center gap-[5px] cursor-pointer">
+                    <div
+                      className="flex items-center gap-[5px] cursor-pointer"
+                      onClick={() => handleDeleteCar(car._id)}
+                    >
                       <p>
                         <BsTrash
                           title="Remove Car"
@@ -502,9 +626,13 @@ const Cars = () => {
                       </p>
                       <p>Delete Car</p>
                     </div>
-                    <div
+
+                    {/* <div
                       className="flex items-center gap-[5px] cursor-pointer"
-                      onClick={() => setUpdateCarForm(true)}
+                      onClick={() => {
+                        setUpdateCarForm(true);
+                        setCarUpdateId(car._id);
+                      }}
                     >
                       <p>
                         <BsPen
@@ -514,8 +642,9 @@ const Cars = () => {
                       </p>
 
                       <p>Update Car</p>
-                    </div>
+                    </div> */}
                   </div>
+                  {/* update car */}
                 </div>
               ))}
             </div>
