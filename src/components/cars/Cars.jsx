@@ -35,6 +35,39 @@ const Cars = () => {
   const [carUpdateDetail, setCarUpdateDetail] = useState([]);
   const [carUpdateId, setCarUpdateId] = useState(""); //works
 
+  // updateCarFields
+  const [carName, setCarName] = useState("");
+  const [carSeats, setCarSeats] = useState("");
+  const [carPrice, setCarPrice] = useState("");
+  const [carImage, setCarImage] = useState("");
+  const [carGear, setCarGear] = useState("");
+  const [carStatus, setCarStatus] = useState("");
+
+  useEffect(() => {
+    setTitle(carName);
+    setSeats(carSeats);
+    setPrice(carPrice);
+    setGear(carGear);
+    setStatus(carStatus);
+    setImage(carImage);
+  }, [carName, carPrice]);
+
+  const handleUpdateCar = async (e) => {
+    e.preventDefault();
+    try {
+      const carData = { title, seats, price, image, gear, status };
+      await axios.put(
+        "https://car-rentals-backend.vercel.app/api/v1/car/" + carUpdateId,
+        carData
+      );
+      toast.success("Updated Succesfully");
+      setCreateCarLoading(!createCarloading);
+      setUpdateCarForm(false);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
   // search
   const [searchText, setSearchText] = useState("");
   const [searchTimeout, setsearchTimeout] = useState(null);
@@ -311,7 +344,7 @@ const Cars = () => {
         <div className="mt-8 p-[5px]">
           <form
             className="flex flex-col gap-[10px] w-[50%]"
-            onSubmit={() => e.preventDefault()}
+            onSubmit={handleUpdateCar}
           >
             <div className="flex flex-col gap-1">
               <label
@@ -433,7 +466,7 @@ const Cars = () => {
             </div>
             <button
               className="bg-[#f518e3] text-white rounded-md p-[8px]"
-              // onClick={handleUpdateCar}
+              onClick={handleUpdateCar}
             >
               Update Car
             </button>
@@ -627,11 +660,18 @@ const Cars = () => {
                       <p>Delete Car</p>
                     </div>
 
-                    {/* <div
+                    <div
                       className="flex items-center gap-[5px] cursor-pointer"
                       onClick={() => {
                         setUpdateCarForm(true);
                         setCarUpdateId(car._id);
+                        setCarName(car.title);
+                        setCarSeats(car.seats);
+
+                        setCarPrice(car.price);
+                        setCarGear(car.gear);
+                        setCarStatus(car.status);
+                        setCarImage(car.image);
                       }}
                     >
                       <p>
@@ -642,7 +682,7 @@ const Cars = () => {
                       </p>
 
                       <p>Update Car</p>
-                    </div> */}
+                    </div>
                   </div>
                   {/* update car */}
                 </div>
